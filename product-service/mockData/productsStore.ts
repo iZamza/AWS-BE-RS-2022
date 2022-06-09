@@ -1,39 +1,45 @@
 export interface IProduct {
-  id: string;
-  productImageUrl: string;
-  productName: string;
-  productPrice: number;
+  id: string,
+  title: string,
+  description: string,
+  price: number
 }
 
 export const productsStore: IProduct[] = [
   {
     id: "1",
-    productImageUrl: 'https://source.unsplash.com/random?sig=0',
-    productName: 'First product',
-    productPrice: 100
+    title: 'FIRST',
+    description: 'some description first',
+    price: 100
   },
   {
     id: "2",
-    productImageUrl: 'https://source.unsplash.com/random?sig=1',
-    productName: 'Second product',
-    productPrice: 1000
+    title: 'SECOND',
+    description: 'some description second',
+    price: 200
   },
   {
     id: "3",
-    productImageUrl: 'https://source.unsplash.com/random?sig=2',
-    productName: '3rd product',
-    productPrice: 70
+    title: '3th',
+    description: 'some description 3th',
+    price: 300
   },
   {
     id: "4",
-    productImageUrl: 'https://source.unsplash.com/random?sig=3',
-    productName: '4th product',
-    productPrice: 10
+    title: '4th',
+    description: 'some description 4th',
+    price: 600
   },
   {
     id: "5",
-    productImageUrl: 'https://source.unsplash.com/random?sig=4',
-    productName: '5th product',
-    productPrice: 33
+    title: '5th',
+    description: 'some description 5th',
+    price: 800
+  },
+  {
+    id: "6",
+    title: '6th',
+    description: 'some description 6th',
+    price: 1000
   }
 ]
