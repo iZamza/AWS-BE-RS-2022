@@ -3,15 +3,16 @@ import { formatJSONResponse } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
 
 import schema from './schema';
+import {productsStore} from "../../../mockData/productsStore";
 
-const fakeArr = [{what: 'that!'}, {thi: 'hello'}];
+const awaitProductsStore = new Promise((resolve) => setTimeout(() => {resolve(productsStore)}, 1));
 
-const getProductList: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+const getProductList: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async () => {
+  const fetchedProductsStore = await awaitProductsStore;
   return formatJSONResponse({
-    message: `Hello from getProductList!`,
-    event,
+    message: `products are okay:)`,
     body: {
-      ...fakeArr
+      fetchedProductsStore
     }
   });
 };

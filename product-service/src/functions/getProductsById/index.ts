@@ -6,7 +6,14 @@ export default {
     {
       http: {
         method: 'get',
-        path: 'products'
+        path: `products/{id}`,
+        request: {
+          parameters: {
+            paths: {
+              id: true
+            }
+          }
+        }
       },
     },
   ],
