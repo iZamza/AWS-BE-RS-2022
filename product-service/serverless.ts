@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import {getProductsList, getProductsById} from "@functions/index";
+import {getProductsList, getProductsById, postProduct} from "@functions/index";
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -16,10 +16,14 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      PG_HOST: 'lesson4-instance.cmn2lq13v5al.us-east-1.rds.amazonaws.com',
+      PG_PORT: '5432',
+      PG_DATABASE: 'postgres',
+      PG_USERNAME: 'postgres',
     },
   },
   // import the function via paths
-  functions: { getProductsList, getProductsById },
+  functions: { getProductsList, getProductsById, postProduct },
   package: { individually: true },
   custom: {
     esbuild: {
