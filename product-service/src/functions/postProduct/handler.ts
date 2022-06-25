@@ -21,6 +21,7 @@ const dbOptions = {
 };
 
 const postProduct: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+  console.log(event);
   const {title, description, price, count} = event.body;
   const invalidDataExist = !title || !description || +price < 0 || +count < 0;
 

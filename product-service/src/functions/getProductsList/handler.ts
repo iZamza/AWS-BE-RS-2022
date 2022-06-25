@@ -20,7 +20,8 @@ const dbOptions = {
   connectionTimeoutMillis: 5000
 };
 
-const getProductList: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async () => {
+const getProductList: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+  console.log(event);
   const client = new Client(dbOptions);
   await client.connect();
 

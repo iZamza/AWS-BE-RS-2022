@@ -21,6 +21,7 @@ const dbOptions = {
 };
 
 const getProductsById: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
+  console.log(event);
   const client = new Client(dbOptions);
   await client.connect();
 
