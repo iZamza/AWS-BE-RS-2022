@@ -1,0 +1,12 @@
+service: rsschool-import-file
+
+provider:
+  type: aws
+  runtime: nodejs12.x
+
+
+functions:
+  importProductsFile:
+    handler: handler.importProductsFile
+    events:
+      - http: GET import
