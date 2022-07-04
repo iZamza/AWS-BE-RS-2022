@@ -1,12 +1,47 @@
-service: rsschool-import-file
+service: import-service
+frameworkVersion: "3"
+
+plugins:
+  - serverless-webpack
 
 provider:
-  type: aws
-  runtime: nodejs12.x
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: eu-west-1
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
 
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: "s3:ListBucket"
+      Resource:
+        - "arn:aws:s3:::import-service"
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource:
+        - "arn:aws:s3:::import-service/*"
 
 functions:
-  importProductsFile:
-    handler: handler.importProductsFile
+  importFileParser:
+    handler: importFileParser
     events:
-      - http: GET import
+      - s3:
+          bucket: import-service
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+          existing: true
+
+  importProductsFile:
+    handler: importProductsFile
+    events:
+      - http:
+          path: /import
+          method: GET
+          request:
+            parameters:
+              querystrings:
+                name: true
