@@ -1,10 +1,12 @@
-import AWS from "aws-sdk";
-const BUCKET = "import-service";
+'use strict';
+const AWS = require("aws-sdk");
+const BUCKET = 'import-csv-service';
 
-const importProductsFile = async (event) => {
+module.exports.importProductsFile = async (event) => {
   console.log(event);
-  const s3 = new AWS.S3({ region: "eu-west-1" });
+  const s3 = new AWS.S3({ region: "us-east-1" });
   const { name } = event.queryStringParameters;
+
   const command = {
     Bucket: BUCKET,
     Key: `uploaded/${name}`,
@@ -20,5 +22,3 @@ const importProductsFile = async (event) => {
     body: JSON.stringify(signedUrl),
   };
 };
-
-export default importProductsFile;
