@@ -1,6 +1,25 @@
 service: import-csv-service
 frameworkVersion: '3'
 
+
+resources:
+  Resources:
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalogItemsQueue
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+    SNSSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: izamza@gmail.com
+        Protocol: email
+        TopicArn:
+          Ref: SNSTopic
+
 provider:
   name: aws
   runtime: nodejs12.x
@@ -9,6 +28,12 @@ provider:
   apiGateway:
     minimumCompressionSize: 1024
     shouldStartNameWithService: true
+
+  environment:
+    SQS_URL:
+      Ref: SQSQueue
+    SNS_ARN:
+      Ref: SNSTopic
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -20,6 +45,14 @@ provider:
         - "s3:*"
       Resource:
         - "arn:aws:s3:::import-csv-service/*"
+    - Effect: "Allow"
+      Action: "sqs:*"
+      Resource:
+        Fn::GetAtt: [SQSQueue, Arn]
+    - Effect: "Allow"
+      Action: "sns:*"
+      Resource:
+        - "arn:aws:sns:us-east-1:059624470500:createProductTopic"
 
 functions:
   importProductsFile:
@@ -41,3 +74,12 @@ functions:
           rules:
             - prefix: uploaded/
           existing: true
+  catalogBatchProcess:
+    handler: catalogBatchProcess.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - SQSQueue
+              - Arn
