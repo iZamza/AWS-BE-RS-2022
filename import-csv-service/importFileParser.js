@@ -9,21 +9,26 @@ module.exports.importFileParser = async (event) => {
   const sqs = new AWS.SQS({ region: "us-east-1" });
 
   for (const record of event.Records) {
-    const Key = record.s3.object.key;
-    // const bucketName = record.s3.bucket.name;
+    const BUCKET = record.s3.bucket.name;
+    const key = record.s3.object.key;
 
-    const bucketFile = s3.getObject({
-      Bucket: BUCKET,
-      Key
-    });
-
-    bucketFile.createReadStream().pipe(csv()).on('data', async (data) => {
-      await sqs.sendMessage({
-        QueueUrl: process.env.SQS_URL,
-        MessageBody: JSON.stringify(data)
-      }, () => {
-        console.log('SQS send')
+    await new Promise((resolve) => {
+      s3.getObject({
+        Bucket: BUCKET,
+        Key: key,
       })
+        .createReadStream()
+        .pipe(csv())
+        .on('data', (fileData) => {
+          console.log(fileData);
+
+          sqs.sendMessage({
+            QueueUrl: process.env.SQS_URL,
+            MessageBody: JSON.stringify(fileData)
+          }, () => {
+            console.log('SQS send')
+          })
+        });
     });
 
     // const handleParseAndUpdate = async () => {
