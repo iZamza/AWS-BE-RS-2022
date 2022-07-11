@@ -20,7 +20,6 @@ const serverlessConfiguration: AWS = {
       PG_PORT: '5432',
       PG_DATABASE: 'postgres',
       PG_USERNAME: 'postgres',
-      PG_PASSWORD: '4UNIbX5tfBk6IX6zIkWX'
     },
   },
   // import the function via paths
