@@ -25,6 +25,10 @@ provider:
   runtime: nodejs12.x
   stage: dev
   region: us-east-1
+  httpApi:
+    cors:
+      allowedOrigins:
+        - https://d30a10x0kit4gv.cloudfront.net
   apiGateway:
     minimumCompressionSize: 1024
     shouldStartNameWithService: true
