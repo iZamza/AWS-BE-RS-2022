@@ -1,0 +1,89 @@
+service: import-csv-service
+frameworkVersion: '3'
+
+
+resources:
+  Resources:
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalogItemsQueue
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+    SNSSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: izamza@gmail.com
+        Protocol: email
+        TopicArn:
+          Ref: SNSTopic
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-1
+  httpApi:
+    cors:
+      allowedOrigins:
+        - https://d30a10x0kit4gv.cloudfront.net
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+
+  environment:
+    SQS_URL:
+      Ref: SQSQueue
+    SNS_ARN:
+      Ref: SNSTopic
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: "s3:ListBucket"
+      Resource:
+        - "arn:aws:s3:::import-csv-service"
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource:
+        - "arn:aws:s3:::import-csv-service/*"
+    - Effect: "Allow"
+      Action: "sqs:*"
+      Resource:
+        Fn::GetAtt: [SQSQueue, Arn]
+    - Effect: "Allow"
+      Action: "sns:*"
+      Resource:
+        - "arn:aws:sns:us-east-1:059624470500:createProductTopic"
+
+functions:
+  importProductsFile:
+    handler: importProductsFile.importProductsFile
+    events:
+      - http:
+          path: /import
+          method: GET
+          request:
+            parameters:
+              querystrings:
+                name: true
+  importFileParser:
+    handler: importFileParser.importFileParser
+    events:
+      - s3:
+          bucket: import-csv-service
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+          existing: true
+  catalogBatchProcess:
+    handler: catalogBatchProcess.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - SQSQueue
+              - Arn
