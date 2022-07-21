@@ -1,18 +1,48 @@
 'use strict';
 
 module.exports.basicAuthorizer = async (event) => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: 'Go Serverless v1.0! Your function executed successfully!',
-        input: event,
-      },
-      null,
-      2
-    ),
-  };
+  const AuthToken = event.authorizationToken;
+  console.log(AuthToken);
+  if (!AuthToken) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify(
+        {
+          message: 'You need a token:)'
+        }
+      ),
+    };
+  } else {
+    const tokenPart = AuthToken.split(' ')[1];
+    console.log('tokenPart', tokenPart);
+    const decodedToken = Buffer.from(tokenPart, 'base64').toString('utf-8').split('%3A');
+    console.log('decodedToken', decodedToken);
+    const envLogin = process.env.TEST_LOGIN;
+    const envPassword = process.env.TEST_PASSWORD;
 
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
+    if (decodedToken[0] === envLogin && decodedToken[1] === envPassword) {
+      return {
+        principalId: envLogin,
+        policyDocument: {
+          Version: '2012-10-17',
+          Statement: [
+            {
+              Action: 'execute-api: Invoke',
+              Effect: 'Allow',
+              Resource: event.methodArn
+            }
+          ]
+        }
+      };
+    } else {
+      return {
+        statusCode: 403,
+        body: JSON.stringify(
+          {
+            message: 'Access denied!',
+          }
+        ),
+      };
+    }
+  }
 };
