@@ -28,7 +28,20 @@ provider:
   httpApi:
     cors:
       allowedOrigins:
-        - https://d30a10x0kit4gv.cloudfront.net
+        - "*"
+        - https://d30a10x0kit4gv.cloudfront.net/
+      allowedMethods:
+        - GET
+        - OPTIONS
+        - PUT
+        - POST
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+        - authorization
+        - X-Auth-Token
+        - Origin
+
   apiGateway:
     minimumCompressionSize: 1024
     shouldStartNameWithService: true
@@ -64,6 +77,7 @@ functions:
     events:
       - http:
           path: /import
+          cors: true
           method: GET
           request:
             parameters:
