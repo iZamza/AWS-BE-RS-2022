@@ -1,0 +1,17 @@
+service: authorization-service
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: eu-west-1
+  stage: dev
+
+  environment:
+    TEST_PASSWORD: 'TEST_PASSWORD'
+    TEST_LOGIN: 'izamza'
+
+
+functions:
+  basicAuthorizer:
+    handler: basicAuthorizer.basicAuthorizer
