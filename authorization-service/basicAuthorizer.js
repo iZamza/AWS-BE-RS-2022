@@ -39,7 +39,7 @@ module.exports.basicAuthorizer = async (event) => {
         statusCode: 403,
         body: JSON.stringify(
           {
-            message: 'Access denied!',
+            message: 'Access denied, man!',
           }
         ),
       };
